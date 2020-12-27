@@ -6,6 +6,8 @@ import { Fami } from "./modules/fami.mjs"
 
 const bot = new TelegramBot(config.token, { polling: true });
 
+bot.setWebHook(config.webhook);
+
 bot.on("document", async msg => {
     const chatId = msg.chat.id;
     const messageId = msg.message_id;
