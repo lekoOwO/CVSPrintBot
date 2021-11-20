@@ -47,24 +47,27 @@ async function go(x){
 }
 
 bot.on("document", async msg => {
-    await go({
+    const data = {
         chatId: msg.chat.id,
         messageId: msg.message_id,
         userId: msg.from.id,
         fileId: msg.document.file_id,
         filename: msg.document.file_name,
         text: msg.caption
-    })
+    };
+    if (Object.values(data).filter(x => x === undefined).length) return;
+    await go(data)
 })
 
 bot.on("text", async msg => {
-    if (!msg.reply_to_message) return;
-    await go({
+    const data = {
         chatId: msg.chat.id,
         messageId: msg.message_id,
         userId: msg.from.id,
-        fileId: msg.reply_to_message.document.file_id,
-        filename: msg.reply_to_message.document.file_name,
-        text: msg.text
-    })
+        fileId: msg?.reply_to_message?.document?.file_id,
+        filename: msg?.reply_to_message?.document?.file_name,
+        text: msg?.text
+    };
+    if (Object.values(data).filter(x => x === undefined).length) return;
+    await go(data)
 })
