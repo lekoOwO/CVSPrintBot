@@ -8,13 +8,8 @@ const bot = new TelegramBot(config.token, { polling: true });
 
 bot.setWebHook(config.webhook);
 
-bot.on("document", async msg => {
-    const chatId = msg.chat.id;
-    const messageId = msg.message_id;
-    const userId = msg.from.id;
-    const fileId = msg.document.file_id;
-    const filename = msg.document.file_name
-    const text = msg.caption;
+async function go(x){
+    const {chatId, messageId, userId, fileId, filename, text} = x;
 
     if (!(config.allowedUser.length === 0 || config.allowedUser.includes(userId))) {
         return
@@ -48,4 +43,28 @@ bot.on("document", async msg => {
             parse_mode: "Markdown"
         })
     }
+
+}
+
+bot.on("document", async msg => {
+    await go({
+        chatId: msg.chat.id,
+        messageId: msg.message_id,
+        userId: msg.from.id,
+        fileId: msg.document.file_id,
+        filename: msg.document.file_name,
+        text: msg.caption
+    })
+})
+
+bot.on("text", async msg => {
+    if (!msg.reply_to_message) return;
+    await go({
+        chatId: msg.chat.id,
+        messageId: msg.message_id,
+        userId: msg.from.id,
+        fileId: msg.reply_to_message.document.file_id,
+        filename: msg.reply_to_message.document.file_name,
+        text: msg.text
+    })
 })
